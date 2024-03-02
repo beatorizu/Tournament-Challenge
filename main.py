@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException
 
-from models import Tournament
+from models import Competitor, Tournament
 
 app = FastAPI()
 
@@ -27,3 +27,23 @@ async def get_tournament(id: str):
         tournament = load(stream)
     
     return tournament
+
+@app.post("/tournament/{id}/competitor")
+async def register_competitor(id, competitor: Competitor):
+    with open(f".tournaments/{id}.json") as stream:
+        tournament = load(stream)
+
+    if tournament.get("competitors") is None:
+        tournament["competitors"] = []
+
+    competitor_id = uuid4()
+
+    tournament["competitors"].append({
+        "id": f"{competitor_id}",
+        "name": competitor.name
+    })
+
+    with open(f".tournaments/{id}.json", "w") as stream:
+        dump(tournament, stream)
+
+    return {"id": competitor_id, "name": competitor.name}
