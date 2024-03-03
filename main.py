@@ -47,3 +47,13 @@ async def register_competitor(id, competitor: Competitor):
         dump(tournament, stream)
 
     return {"id": competitor_id, "name": competitor.name}
+
+@app.get("/tournament/{id}/competitor/{competitor_id}")
+async def get_competitor(id, competitor_id: str):
+    with open(f".tournaments/{id}.json") as stream:
+        tournament = load(stream)
+
+    if tournament.get("competitors") is None:
+        raise HTTPException(status_code=404, detail="No competitors registered yet")
+
+    return [c for c in tournament["competitors"] if c["id"] == competitor_id][0]

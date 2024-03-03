@@ -1,3 +1,4 @@
+import pytest
 from fastapi.testclient import TestClient
 
 from main import app
@@ -15,7 +16,7 @@ def test_can_create_tournament():
     response = client.post("/tournament", json={"name": "Wood Gladiators"})
 
     assert response.status_code == 200
-    assert response.content["id"] is not None
+    assert response.json()["id"] is not None
 
 
 def test_can_retrieve_tournament_by_id():
@@ -36,9 +37,23 @@ def test_cannot_retrieve_tournament_by_id():
     assert response.status_code == 404
 
 
-def test_can_register_competitor():
-    response = client.post("/tournament/8581c72f-bc5d-4087-aaf8-2ef70c8bd542/competitor", json={"name": "Mari"})
+@pytest.mark.parametrize("name", ['Lorem', 'Ipsum', 'Dolor', 'Sit', 'Amet', 'Consectetur', 'Adipiscing', 'Elit', 'Sed', 'Do', 'Eiusmod', 'Tempor', 'Incididunt', 'Ut', 'Labore', 'Et'])
+def test_can_register_competitor(name):
+    response = client.post("/tournament/8581c72f-bc5d-4087-aaf8-2ef70c8bd542/competitor", json={"name": name})
 
     assert response.status_code == 200
     assert response.json()["id"] is not None
-    assert response.json()["name"] == "Mari"
+    assert response.json()["name"] == name
+
+
+def test_can_retrieve_competitor():
+    expected_body = {
+        "id": "a1227978-1ae1-4279-bb08-fdc2b7ff1c8b",
+        "name": "Sed",
+        "eliminated": False
+    }
+
+    response = client.get("/tournament/01255f28-ba4a-4a9a-bf91-3178d3b0b6f3/competitor/a1227978-1ae1-4279-bb08-fdc2b7ff1c8b")
+
+    assert response.status_code == 200
+    assert response.json() == expected_body
