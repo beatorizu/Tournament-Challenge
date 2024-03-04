@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException
 
-from models import Competitor, Tournament
+from models import Competitor, MatchResult, Tournament
 
 app = FastAPI()
 
@@ -57,3 +57,17 @@ async def get_competitor(id, competitor_id: str):
         raise HTTPException(status_code=404, detail="No competitors registered yet")
 
     return [c for c in tournament["competitors"] if c["id"] == competitor_id][0]
+
+@app.post("/tournament/{id}/match/{match_id}")
+async def register_match(id: str, match_id: str, match_result: MatchResult):
+
+    match = [c for c in tournament["matches"] if c["id"] == match_id][0]
+
+    competitor_a = [c for c in tournament["competitors"] if c["id"] == match["competitor_a"]][0]
+    competitor_b = [c for c in tournament["competitors"] if c["id"] == match["competitor_b"]][0]
+
+    competitor_a["eliminated"] = match_result.competitor_a["eliminated"]
+    competitor_b["eliminated"] = match_result.competitor_b["eliminated"]
+
+    with open(f".tournaments/{id}.json", "w") as stream:
+        dump(tournament, stream)

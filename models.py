@@ -7,3 +7,8 @@ class Tournament(BaseModel):
 
 class Competitor(BaseModel):
 	name:str
+
+
+class MatchResult(BaseModel):
+	competitor_a: dict
+	competitor_b: dict

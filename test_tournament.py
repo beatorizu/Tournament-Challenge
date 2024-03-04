@@ -57,3 +57,34 @@ def test_can_retrieve_competitor():
 
     assert response.status_code == 200
     assert response.json() == expected_body
+
+
+def test_can_retrieve_match():
+    response = client.get("/tournament/01255f28-ba4a-4a9a-bf91-3178d3b0b6f3/match")
+
+    assert response.status_code == 200
+
+
+def test_can_register_match_result():
+    competitor_a_status = {
+        "id": "aed0f2be-5100-4a98-a240-d9a1693ad2ab",
+        "name": "Lorem",
+        "eliminated": True
+    }
+
+    competitor_b_status = {
+        "id": "a1227978-1ae1-4279-bb08-fdc2b7ff1c8b",
+        "name": "Sed",
+        "eliminated": False
+    }
+
+    response = client.post(
+        "/tournament/01255f28-ba4a-4a9a-bf91-3178d3b0b6f3/match/770c6f66-fe61-4429-b018-14b6d8ca3578",
+        json={"competitor_a": {"eliminated": True}, "competitor_b": {"eliminated": False}})
+
+    assert response.status_code == 200
+
+    response_competitor_a_status = client.get(f"/tournament/01255f28-ba4a-4a9a-bf91-3178d3b0b6f3/competitor/{competitor_a_status['id']}")
+    response_competitor_b_status = client.get(f"/tournament/01255f28-ba4a-4a9a-bf91-3178d3b0b6f3/competitor/{competitor_b_status['id']}")
+    assert response_competitor_a_status.json() == competitor_a_status
+    assert response_competitor_b_status.json() == competitor_b_status
