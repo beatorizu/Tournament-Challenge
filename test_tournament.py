@@ -12,6 +12,7 @@ def test_can_access_root():
     assert response.json() == {"msg": "Hello World"}
 
 
+@pytest.mark.freeze_uuids
 def test_can_create_tournament():
     response = client.post("/tournament", json={"name": "Wood Gladiators"})
 
@@ -19,9 +20,10 @@ def test_can_create_tournament():
     assert response.json()["id"] is not None
 
 
+@pytest.mark.freeze_uuids
 def test_can_retrieve_tournament_by_id():
     expected_response = {
-        "id": "8581c72f-bc5d-4087-aaf8-2ef70c8bd542",
+        "id": "00000000-0000-0000-0000-000000000000",
         "name": "Wood Gladiators"
     }
 
@@ -39,7 +41,7 @@ def test_cannot_retrieve_tournament_by_id():
 
 @pytest.mark.parametrize("name", ['Lorem', 'Ipsum', 'Dolor', 'Sit', 'Amet', 'Consectetur', 'Adipiscing', 'Elit', 'Sed', 'Do', 'Eiusmod', 'Tempor', 'Incididunt', 'Ut', 'Labore', 'Et'])
 def test_can_register_competitor(name):
-    response = client.post("/tournament/8581c72f-bc5d-4087-aaf8-2ef70c8bd542/competitor", json={"name": name})
+    response = client.post("/tournament/00000000-0000-0000-0000-000000000000/competitor", json={"name": name})
 
     assert response.status_code == 200
     assert response.json()["id"] is not None

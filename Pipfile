@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 pytest = "*"
 fastapi = "*"
+pytest-frozen-uuids = "*"
 
 [dev-packages]
 flake8 = "*"
