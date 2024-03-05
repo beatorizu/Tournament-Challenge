@@ -68,3 +68,9 @@ async def register_match(id: str, match_id: str, match_result: MatchResult):
     competitor_b["eliminated"] = match_result.competitor_b["eliminated"]
 
     dump_tournament(id, tournament)
+
+@app.get("/tournament/{id}/match")
+async def get_matches(id: str):
+    tournament = load_tournament(id)
+
+    return tournament["matches"]
